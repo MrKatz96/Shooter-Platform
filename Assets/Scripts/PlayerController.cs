@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour{
     [Header("Input Settings:")]
     [SerializeField] float runSpeed = 5f;
 
+    [Space]
+
     //State
     bool isAlive = true;
 
@@ -16,7 +18,7 @@ public class PlayerController : MonoBehaviour{
     // Start is called before the first frame update
     void Start()
     {
-     
+  
     }
 
     // Update is called once per frame
@@ -37,10 +39,7 @@ public class PlayerController : MonoBehaviour{
         bool playerIsMoving = Math.Abs(GetComponent<Rigidbody2D>().velocity.x) > Mathf.Epsilon;
         GetComponent<Animator>().SetBool("Running", playerIsMoving);
     }
-    private void Shoot()
-    {
-
-    }
+  
     private void Rotate()
     {
         Vector3 gunPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);

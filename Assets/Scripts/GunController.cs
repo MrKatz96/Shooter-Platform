@@ -2,25 +2,40 @@
 
 public class GunController : MonoBehaviour
 {
-    public GameObject player;
+    
+    public GameObject projectile;
+    public Transform shotPoint;
+    private float timeBetweenShots;
+    public float startTimeBetweenShots;
     // Update is called once per frame
     void Update()
     {
         RotateGun();
+        Shoot();
     }
 
     private void Start()
     {
-        Transform playerChildTransform = transform.parent;
-        Debug.Log(playerChildTransform.position);
+
     }
 
     private void Shoot()
     {
-        if (Input.GetMouseButton(0))
+     
+        if(timeBetweenShots <= 0)
         {
-            
+            if (Input.GetMouseButton(0))
+            {
+                Instantiate(projectile, shotPoint.position, transform.rotation);
+                timeBetweenShots = startTimeBetweenShots;
+                
+            }
+            else
+            {
+                timeBetweenShots -= Time.deltaTime;
+            }
         }
+       
     }
 
     private void RotateGun()
@@ -42,4 +57,5 @@ public class GunController : MonoBehaviour
             transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, gunAngle));
         }
     }
+    
 }

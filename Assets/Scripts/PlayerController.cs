@@ -6,19 +6,19 @@ public class PlayerController : MonoBehaviour{
     //Config
     [Header("Input Settings:")]
     [SerializeField] float runSpeed = 5f;
-
-    [Space]
+    
+    //[Space]
 
     //State
-    bool isAlive = true;
+    //bool isAlive = true;
 
     //Cached Component references
 
-   
+
     // Start is called before the first frame update
     void Start()
     {
-  
+        
     }
 
     // Update is called once per frame

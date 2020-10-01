@@ -6,7 +6,13 @@ public class PlayerController : MonoBehaviour{
     //Config
     [Header("Input Settings:")]
     [SerializeField] float runSpeed = 5f;
-    
+    [SerializeField] float jumpForce = 8f;
+    private Rigidbody2D player;
+    public Transform groundCheckPoint;
+  	public float groundCheckRadius;
+  	public LayerMask groundLayer;
+  	private bool isTouchingGround;
+
     //[Space]
 
     //State
@@ -18,7 +24,7 @@ public class PlayerController : MonoBehaviour{
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GetComponent<Rigidbody2D> ();
     }
 
     // Update is called once per frame
@@ -26,6 +32,8 @@ public class PlayerController : MonoBehaviour{
     {
         Run();
         Rotate();
+        Jump();
+        isTouchingGround = Physics2D.OverlapCircle (groundCheckPoint.position, groundCheckRadius, groundLayer);
     }
 
     private void Run()
@@ -51,6 +59,14 @@ public class PlayerController : MonoBehaviour{
         {
             transform.eulerAngles = new Vector3(transform.rotation.x, 0f, transform.rotation.z);
         }
+    }
+
+    private void Jump()
+    {
+    	if(Input.GetButtonDown ("Jump") && isTouchingGround){
+        	player.velocity = new Vector2(player.velocity.x,jumpForce);
+    	}
+ 
     }
 }
 

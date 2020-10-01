@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pathfinding;
 
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private string _name;
     [SerializeField] private float _moveSpeed;
-    private float _healthPoint;
-    [SerializeField] private float _maxHealthPoint;
-    private Transform _target;
+
+    public Transform _target;
     [SerializeField] private float _distance;
     private Rigidbody2D _rigidbody;
     private Vector2 _moveTo;
@@ -18,25 +18,66 @@ public class Enemy : MonoBehaviour
     //TRUE = "Right" FALSE = "Left"
     private bool _direction = true;
 
-    private void Awake()
+    private float _startingY;
+    private float nextWayPointDist = 3f;
+    Path path; 
+    int currentWayPoint = 0;
+    Seeker seeker;
+    bool reachedEndOfPath = false;
+
+    private void Start()
     {
-        _healthPoint = _maxHealthPoint;
-        _target = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        
+
+        seeker = GetComponent<Seeker>();
         _rigidbody = GetComponent<Rigidbody2D>();
+        InvokeRepeating("UpdatePath", 0f, .5f);
+        _startingY = transform.position.y;
+        seeker.StartPath(_rigidbody.position, new Vector2(_target.position.x, _startingY), OnPathComplete);
+     
     }
 
+    void UpdatePath()
+    {
+        if (seeker.IsDone())
+            seeker.StartPath(_rigidbody.position, new Vector2(_target.position.x, _startingY), OnPathComplete);
+    }
+    void OnPathComplete(Path p)
+    {
+        if (!p.error)
+        {
+            path = p;
+            currentWayPoint = 0;
+        }
+    }
     //Calculate data in Update
     private void Update()
     {
-        GetDestination();
-        GetRotate();
+       
     }
 
     //Move objects in FixedUpdate
     private void FixedUpdate()
     {
-        Destination();
-        Rotate();
+        if (path == null)
+            return;
+        if (currentWayPoint >= path.vectorPath.Count)
+        {
+            reachedEndOfPath = true;
+            return;
+        }
+        else
+        {
+            reachedEndOfPath = false;
+        }
+        Vector2 direction = ((Vector2)path.vectorPath[currentWayPoint] - _rigidbody.position).normalized;
+        Vector2 force = direction * _moveSpeed * Time.deltaTime;
+        _rigidbody.AddForce(force);
+        float distance = Vector2.Distance(_rigidbody.position, path.vectorPath[currentWayPoint]);
+        if (distance < nextWayPointDist)
+        {
+            currentWayPoint++;
+        }
     }
 
 
